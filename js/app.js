@@ -110,44 +110,73 @@ $("f").onsubmit=async e=>{
  }catch(x){$("place").innerHTML='<span class="err">Không tìm thấy địa điểm này.</span>'}
 };
 
-const CITIES=[["Hà Nội",21.0285,105.8542],["Bắc Ninh",21.186,106.0763],["Hải Phòng",20.8449,106.6881],["Vinh",18.6796,105.6813],["Huế",16.4637,107.5909],["Đà Nẵng",16.0544,108.2022],["Quy Nhơn",13.782,109.2196],["Nha Trang",12.2388,109.1967],["Buôn Ma Thuột",12.6667,108.0378],["Đà Lạt",11.9404,108.4583],["TP.HCM",10.8231,106.6297],["Cần Thơ",10.0452,105.7469]];
-let map=null,layer=null;
+const CITIES=[
+["Hà Nội",21.0285,105.8542,"vn"],["Bắc Ninh",21.186,106.0763,"vn"],["Hải Phòng",20.8449,106.6881,"vn"],["Vinh",18.6796,105.6813,"vn"],["Huế",16.4637,107.5909,"vn"],["Đà Nẵng",16.0544,108.2022,"vn"],["Quy Nhơn",13.782,109.2196,"vn"],["Nha Trang",12.2388,109.1967,"vn"],["Buôn Ma Thuột",12.6667,108.0378,"vn"],["Đà Lạt",11.9404,108.4583,"vn"],["TP.HCM",10.8231,106.6297,"vn"],["Cần Thơ",10.0452,105.7469,"vn"],
+["Bangkok",13.7563,100.5018,"asia"],["Jakarta",-6.2088,106.8456,"asia"],["Singapore",1.3521,103.8198,"asia"],["Kuala Lumpur",3.139,101.6869,"asia"],["Manila",14.5995,120.9842,"asia"],["Phnom Penh",11.5564,104.9282,"asia"],["Vientiane",17.9757,102.6331,"asia"],["Yangon",16.8409,96.1735,"asia"],["Bắc Kinh",39.9042,116.4074,"asia"],["Thượng Hải",31.2304,121.4737,"asia"],["Hồng Kông",22.3193,114.1694,"asia"],["Đài Bắc",25.033,121.5654,"asia"],["Seoul",37.5665,126.978,"asia"],["Tokyo",35.6762,139.6503,"asia"],["Delhi",28.6139,77.209,"asia"],["Mumbai",19.076,72.8777,"asia"],["Dhaka",23.8103,90.4125,"asia"],["Lahore",31.5204,74.3587,"asia"],["Dubai",25.2048,55.2708,"asia"],
+["London",51.5072,-0.1276,"world"],["Paris",48.8566,2.3522,"world"],["Berlin",52.52,13.405,"world"],["Istanbul",41.0082,28.9784,"world"],["Moscow",55.7558,37.6173,"world"],["Cairo",30.0444,31.2357,"world"],["Lagos",6.5244,3.3792,"world"],["Nairobi",-1.2921,36.8219,"world"],["Sydney",-33.8688,151.2093,"world"],["New York",40.7128,-74.006,"world"],["Los Angeles",34.0522,-118.2437,"world"],["Toronto",43.6532,-79.3832,"world"],["Mexico City",19.4326,-99.1332,"world"],["São Paulo",-23.5505,-46.6333,"world"],["Lima",-12.0464,-77.0428,"world"]
+];
+const REGIONS={
+ vn:{label:"Việt Nam",view:[16.2,106.3],zoom:5,has:r=>r.reg=="vn"},
+ asia:{label:"Châu Á",view:[23,100],zoom:3,has:r=>r.reg=="vn"||r.reg=="asia"},
+ world:{label:"Toàn cầu",view:[20,10],zoom:2,has:()=>true}
+};
+let region="vn",allRows=[],map=null,layer=null;
 
 function pick(c){
  load(c.lat,c.lon,c.name);
  window.scrollTo({top:0,behavior:"smooth"});
 }
 
+function renderRegions(){
+ $("regions").innerHTML="";
+ for(const k in REGIONS){
+  const b=document.createElement("button");
+  b.type="button";b.textContent=REGIONS[k].label;
+  b.setAttribute("aria-pressed",region==k);
+  b.onclick=()=>{region=k;renderRegions();renderCities(true)};
+  $("regions").appendChild(b);
+ }
+}
+
+function renderCities(recenter){
+ const R=REGIONS[region];
+ const rows=allRows.filter(R.has).sort((a,b)=>b.aqi-a.aqi);
+
+ // Bảng xếp hạng: từ ô nhiễm nhất đến sạch nhất
+ $("rank").innerHTML="";
+ rows.forEach(r=>{
+  const LV=lv(r.aqi),li=document.createElement("li"),b=document.createElement("button");
+  b.type="button";
+  b.innerHTML=`<span class="dot" style="background:${LV.c}"></span><span class="nm">${r.name}</span><span class="lvl">${LV.name}</span><span class="val" style="color:${LV.c}">${r.aqi}</span>`;
+  b.onclick=()=>pick(r);
+  li.appendChild(b);$("rank").appendChild(li);
+ });
+
+ // Bản đồ (nếu thư viện Leaflet tải được)
+ if(typeof L==="undefined"){$("map").style.display="none";return}
+ if(!map){
+  map=window.L.map("map",{scrollWheelZoom:false,worldCopyJump:true}).setView(R.view,R.zoom);
+  window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:12,attribution:"© OpenStreetMap"}).addTo(map);
+  layer=window.L.layerGroup().addTo(map);
+ }else if(recenter){
+  map.setView(R.view,R.zoom);
+ }
+ layer.clearLayers();
+ rows.forEach(r=>{
+  const LV=lv(r.aqi);
+  window.L.circleMarker([r.lat,r.lon],{radius:region=="world"?9:13,color:"#fff",weight:2,fillColor:LV.c,fillOpacity:.9})
+   .bindTooltip(`${r.name}: AQI ${r.aqi} (${LV.name})`)
+   .on("click",()=>pick(r)).addTo(layer);
+ });
+}
+
 async function loadCities(){
+ renderRegions();
  try{
   const lat=CITIES.map(c=>c[1]).join(","),lon=CITIES.map(c=>c[2]).join(",");
   const d=await (await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi`)).json();
-  const rows=CITIES.map((c,i)=>({name:c[0],lat:c[1],lon:c[2],aqi:Math.round(d[i].current.us_aqi)})).sort((a,b)=>b.aqi-a.aqi);
-
-  // Bảng xếp hạng: từ ô nhiễm nhất đến sạch nhất
-  $("rank").innerHTML="";
-  rows.forEach(r=>{
-   const L=lv(r.aqi),li=document.createElement("li"),b=document.createElement("button");
-   b.type="button";
-   b.innerHTML=`<span class="dot" style="background:${L.c}"></span><span class="nm">${r.name}</span><span class="lvl">${L.name}</span><span class="val" style="color:${L.c}">${r.aqi}</span>`;
-   b.onclick=()=>pick(r);
-   li.appendChild(b);$("rank").appendChild(li);
-  });
-
-  // Bản đồ (nếu thư viện Leaflet tải được)
-  if(typeof L==="undefined"){$("map").style.display="none";return}
-  if(!map){
-   map=window.L.map("map",{scrollWheelZoom:false}).setView([16.2,106.3],5);
-   window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:12,attribution:"© OpenStreetMap"}).addTo(map);
-   layer=window.L.layerGroup().addTo(map);
-  }
-  layer.clearLayers();
-  rows.forEach(r=>{
-   const L2=lv(r.aqi);
-   window.L.circleMarker([r.lat,r.lon],{radius:14,color:"#fff",weight:2,fillColor:L2.c,fillOpacity:.9})
-    .bindTooltip(`${r.name}: AQI ${r.aqi} (${L2.name})`,{permanent:false})
-    .on("click",()=>pick(r)).addTo(layer);
-  });
+  allRows=CITIES.map((c,i)=>({name:c[0],lat:c[1],lon:c[2],reg:c[3],aqi:d[i]&&d[i].current&&d[i].current.us_aqi!=null?Math.round(d[i].current.us_aqi):null})).filter(r=>r.aqi!=null);
+  renderCities(false);
  }catch(e){
   $("rank").innerHTML='<li class="err">Không tải được dữ liệu các thành phố.</li>';
  }

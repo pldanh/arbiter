@@ -39,3 +39,5 @@ footer{color:var(--mut);font-size:.78rem;margin-top:20px;text-align:center}
 .rank .lvl{color:var(--mut);font-size:.85rem}
 .rank .val{font-weight:800;min-width:2.2em;text-align:right}
 .hint{color:var(--mut);font-size:.8rem;margin:8px 0 0}
+
+.rank{max-height:340px;overflow-y:auto}
