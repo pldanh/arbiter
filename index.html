@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thở Sạch</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3a9d5d">
+<link rel="icon" href="assets/icon.svg">
+</head>
+<body>
+<main>
+<header>
+  <h1>Thở Sạch</h1>
+  <form class="search" id="f"><input id="q" placeholder="Tìm thành phố" aria-label="Tìm thành phố"><button>Tìm</button></form>
+</header>
+
+<section class="hero" aria-live="polite">
+  <p class="place" id="place">Đang lấy vị trí…</p>
+  <p class="aqi" id="aqi">–</p>
+  <p class="level" id="level"></p>
+  <p class="sub" id="sub"></p>
+</section>
+
+<section class="card">
+  <h2>Bạn thuộc nhóm nào?</h2>
+  <div class="who" id="who"></div>
+  <p class="big" id="verdict"></p>
+  <ul id="tips"></ul>
+</section>
+
+<section class="card">
+  <h2>Chỉ số 24 giờ tới</h2>
+  <div class="chart" id="chart" role="img" aria-label="Biểu đồ AQI 24 giờ tới"></div>
+  <div class="axis"><span>Bây giờ</span><span>+12 giờ</span><span>+24 giờ</span></div>
+  <p class="best" id="best"></p>
+</section>
+
+<section class="card">
+  <h2>Bụi mịn</h2>
+  <div class="pm"><div><b id="pm25">–</b><span>PM2.5 (µg/m³)</span></div><div><b id="pm10">–</b><span>PM10 (µg/m³)</span></div></div>
+</section>
+
+<footer>Dữ liệu: Open-Meteo Air Quality (chỉ số US AQI). Chỉ mang tính tham khảo, không thay thế lời khuyên của bác sĩ.</footer>
+</main>
+
+<script src="js/app.js"></script>
+<script>if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
+</body>
+</html>
