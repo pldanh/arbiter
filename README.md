@@ -14,8 +14,8 @@ npx serve .
 ```
 Mở http://localhost:8000. Định vị chỉ hoạt động trên localhost hoặc HTTPS.
 
-## Deploy miễn phí
-- Vercel / Netlify: kéo thả thư mục, không cần cấu hình.
+Hoặc
+
 - GitHub Pages: push lên repo, bật Pages ở Settings.
 
 ## Cấu trúc
@@ -30,8 +30,3 @@ tho-sach/
 └── README.md
 ```
 
-## Hướng phát triển
-1. Thông báo khi AQI vượt ngưỡng
-2. Tách app.js thành module: api.js, advice.js, ui.js
-
-Thông tin chỉ mang tính tham khảo, không thay thế lời khuyên của bác sĩ.
