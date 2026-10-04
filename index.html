@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Thở Sạch</title>
+<title>Breathe Clean</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="css/style.css">
@@ -14,45 +14,85 @@
 <body>
 <main>
 <header>
-  <h1>Thở Sạch</h1>
-  <form class="search" id="f"><input id="q" placeholder="Tìm thành phố" aria-label="Tìm thành phố"><button>Tìm</button></form>
+  <h1>Breathe Clean</h1>
+  <form class="search" id="f"><input id="q" placeholder="Search a city" aria-label="Search a city"><button>Search</button></form>
 </header>
 
 <section class="hero" aria-live="polite">
-  <p class="place" id="place">Đang lấy vị trí…</p>
+  <p class="place" id="place">Getting your location…</p>
   <p class="aqi" id="aqi">–</p>
   <p class="level" id="level"></p>
   <p class="sub" id="sub"></p>
 </section>
 
 <section class="card">
-  <h2>Bạn thuộc nhóm nào?</h2>
+  <h2>Who is this for?</h2>
   <div class="who" id="who"></div>
+  <p class="hint">Health conditions (select any that apply)</p>
+  <div class="who" id="conds"></div>
   <p class="big" id="verdict"></p>
   <ul id="tips"></ul>
 </section>
 
 <section class="card">
-  <h2>Chỉ số 24 giờ tới</h2>
-  <div class="chart" id="chart" role="img" aria-label="Biểu đồ AQI 24 giờ tới"></div>
-  <div class="axis"><span>Bây giờ</span><span>+12 giờ</span><span>+24 giờ</span></div>
+  <h2>What are you planning to do today?</h2>
+  <div class="who" id="acts"></div>
+  <p class="big" id="planVerdict">Loading…</p>
+  <div class="chart plan" id="planStrip" role="img" aria-label="Suitability for each hour over the next 24 hours"></div>
+  <div class="axis"><span>Now</span><span>+12h</span><span>+24h</span></div>
+  <p class="best" id="planBest"></p>
+  <p class="hint">Green means suitable, orange means think twice, red means avoid. Calculated from your group, health conditions and activity intensity.</p>
+</section>
+
+<section class="card">
+  <h2>Your family today</h2>
+  <ul class="fam" id="famList"></ul>
+  <div class="famform">
+    <input type="text" id="famName" placeholder="Name (e.g. Mom, Lily)" aria-label="Family member's name">
+    <select id="famGroup" aria-label="Group"><option value="normal">Healthy adult</option><option value="kid">Child</option><option value="old">Older adult</option></select>
+    <label class="chk"><input type="checkbox" id="famWeak"> Has a respiratory or heart condition</label>
+    <button type="button" id="famAdd">Add</button>
+  </div>
+  <button type="button" id="famCopy" class="ghost">Copy a message for the family</button>
+  <p class="hint" id="famMsg"></p>
+</section>
+
+<section class="card">
+  <h2>Alerts when air quality is bad</h2>
+  <div class="alertrow">
+    <select id="thr" aria-label="Alert threshold">
+      <option value="50">From Moderate (AQI above 50)</option>
+      <option value="100">From Poor (AQI above 100)</option>
+      <option value="150">From Unhealthy (AQI above 150)</option>
+      <option value="200">From Very unhealthy (AQI above 200)</option>
+    </select>
+    <button type="button" id="alertOn">Watch this place</button>
+    <button type="button" id="alertTest" class="ghost">Send test</button>
+  </div>
+  <p class="hint" id="alertStatus" aria-live="polite">Pick a threshold, then press "Watch this place". You'll get a notification when AQI goes above it. Alerts only work while this page is open (a background tab is fine).</p>
+</section>
+
+<section class="card">
+  <h2>AQI over the next 24 hours</h2>
+  <div class="chart" id="chart" role="img" aria-label="AQI chart for the next 24 hours"></div>
+  <div class="axis"><span>Now</span><span>+12h</span><span>+24h</span></div>
   <p class="best" id="best"></p>
 </section>
 
 <section class="card">
-  <h2>Không khí các thành phố hôm nay</h2>
+  <h2>Air quality in cities today</h2>
   <div class="who" id="regions"></div>
-  <div id="map" aria-label="Bản đồ chỉ số AQI các thành phố"></div>
+  <div id="map" aria-label="Map of city AQI"></div>
   <ol class="rank" id="rank"></ol>
-  <p class="hint">Bấm vào một thành phố để xem lời khuyên chi tiết. Muốn xem nơi khác, dùng ô "Tìm thành phố" ở đầu trang (tìm được cả thành phố quốc tế).</p>
+  <p class="hint">Tap a city to see detailed advice. To check any other place, use the "Search a city" box at the top of the page.</p>
 </section>
 
 <section class="card">
-  <h2>Bụi mịn</h2>
+  <h2>Fine particles</h2>
   <div class="pm"><div><b id="pm25">–</b><span>PM2.5 (µg/m³)</span></div><div><b id="pm10">–</b><span>PM10 (µg/m³)</span></div></div>
 </section>
 
-<footer>Dữ liệu: Open-Meteo Air Quality (chỉ số US AQI). Chỉ mang tính tham khảo, không thay thế lời khuyên của bác sĩ.</footer>
+<footer>Data: Open-Meteo Air Quality (US AQI). For reference only; not a substitute for medical advice.</footer>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>

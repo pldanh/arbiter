@@ -41,3 +41,17 @@ footer{color:var(--mut);font-size:.78rem;margin-top:20px;text-align:center}
 .hint{color:var(--mut);font-size:.8rem;margin:8px 0 0}
 
 .rank{max-height:340px;overflow-y:auto}
+.alertrow{display:flex;flex-wrap:wrap;gap:8px}
+.alertrow select{flex:1 1 220px}
+.alertrow .ghost{background:#fff;color:var(--ink);border:1px solid #0002}
+.chart.plan{height:32px;align-items:stretch}
+.chart.plan div{height:100%;min-height:0;border-radius:3px}
+.fam{list-style:none;padding:0;margin:0 0 10px}
+.fam li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #0001}
+.fam .dot{width:12px;height:12px;border-radius:50%;margin-top:6px;flex:none}
+.fam .t{flex:1}.fam b{display:block}
+.fam .x{background:transparent;color:var(--mut);padding:0 8px;font-size:1.3rem}
+.famform{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.famform input[type=text]{flex:1 1 150px}
+.chk{display:flex;align-items:center;gap:6px;font-size:.9rem;flex:1 1 100%}
+.ghost{background:#fff;color:var(--ink);border:1px solid #0002}
