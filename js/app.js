@@ -110,6 +110,49 @@ $("f").onsubmit=async e=>{
  }catch(x){$("place").innerHTML='<span class="err">Không tìm thấy địa điểm này.</span>'}
 };
 
+const CITIES=[["Hà Nội",21.0285,105.8542],["Bắc Ninh",21.186,106.0763],["Hải Phòng",20.8449,106.6881],["Vinh",18.6796,105.6813],["Huế",16.4637,107.5909],["Đà Nẵng",16.0544,108.2022],["Quy Nhơn",13.782,109.2196],["Nha Trang",12.2388,109.1967],["Buôn Ma Thuột",12.6667,108.0378],["Đà Lạt",11.9404,108.4583],["TP.HCM",10.8231,106.6297],["Cần Thơ",10.0452,105.7469]];
+let map=null,layer=null;
+
+function pick(c){
+ load(c.lat,c.lon,c.name);
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+async function loadCities(){
+ try{
+  const lat=CITIES.map(c=>c[1]).join(","),lon=CITIES.map(c=>c[2]).join(",");
+  const d=await (await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi`)).json();
+  const rows=CITIES.map((c,i)=>({name:c[0],lat:c[1],lon:c[2],aqi:Math.round(d[i].current.us_aqi)})).sort((a,b)=>b.aqi-a.aqi);
+
+  // Bảng xếp hạng: từ ô nhiễm nhất đến sạch nhất
+  $("rank").innerHTML="";
+  rows.forEach(r=>{
+   const L=lv(r.aqi),li=document.createElement("li"),b=document.createElement("button");
+   b.type="button";
+   b.innerHTML=`<span class="dot" style="background:${L.c}"></span><span class="nm">${r.name}</span><span class="lvl">${L.name}</span><span class="val" style="color:${L.c}">${r.aqi}</span>`;
+   b.onclick=()=>pick(r);
+   li.appendChild(b);$("rank").appendChild(li);
+  });
+
+  // Bản đồ (nếu thư viện Leaflet tải được)
+  if(typeof L==="undefined"){$("map").style.display="none";return}
+  if(!map){
+   map=window.L.map("map",{scrollWheelZoom:false}).setView([16.2,106.3],5);
+   window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:12,attribution:"© OpenStreetMap"}).addTo(map);
+   layer=window.L.layerGroup().addTo(map);
+  }
+  layer.clearLayers();
+  rows.forEach(r=>{
+   const L2=lv(r.aqi);
+   window.L.circleMarker([r.lat,r.lon],{radius:14,color:"#fff",weight:2,fillColor:L2.c,fillOpacity:.9})
+    .bindTooltip(`${r.name}: AQI ${r.aqi} (${L2.name})`,{permanent:false})
+    .on("click",()=>pick(r)).addTo(layer);
+  });
+ }catch(e){
+  $("rank").innerHTML='<li class="err">Không tải được dữ liệu các thành phố.</li>';
+ }
+}
+
 function init(){
  try{const g=localStorage.getItem("group");if(g&&GROUPS[g])state.group=g}catch(e){}
  renderWho();
@@ -121,3 +164,4 @@ function init(){
  );
 }
 init();
+loadCities();

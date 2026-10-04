@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Thở Sạch</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="css/style.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#3a9d5d">
@@ -39,6 +40,13 @@
 </section>
 
 <section class="card">
+  <h2>Không khí các thành phố hôm nay</h2>
+  <div id="map" aria-label="Bản đồ chỉ số AQI các thành phố"></div>
+  <ol class="rank" id="rank"></ol>
+  <p class="hint">Bấm vào một thành phố để xem lời khuyên chi tiết.</p>
+</section>
+
+<section class="card">
   <h2>Bụi mịn</h2>
   <div class="pm"><div><b id="pm25">–</b><span>PM2.5 (µg/m³)</span></div><div><b id="pm10">–</b><span>PM10 (µg/m³)</span></div></div>
 </section>
@@ -46,6 +54,7 @@
 <footer>Dữ liệu: Open-Meteo Air Quality (chỉ số US AQI). Chỉ mang tính tham khảo, không thay thế lời khuyên của bác sĩ.</footer>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="js/app.js"></script>
 <script>if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>

@@ -4,6 +4,7 @@ Web app cho biết chất lượng không khí theo vị trí và đưa lời kh
 
 - Dữ liệu: Open-Meteo Air Quality API (miễn phí, không cần key), chỉ số US AQI
 - Công nghệ: HTML, CSS, JavaScript thuần. Không cần build, không cần server
+- Bản đồ + xếp hạng 12 thành phố: Leaflet + OpenStreetMap, một lần gọi API cho cả 12 điểm
 - PWA: cài được lên điện thoại
 
 ## Chạy thử
@@ -30,9 +31,7 @@ tho-sach/
 ```
 
 ## Hướng phát triển
-1. Bản đồ nhiều khu vực (Leaflet + OpenStreetMap)
-2. So sánh nhiều thành phố
-3. Thông báo khi AQI vượt ngưỡng
-4. Tách app.js thành module: api.js, advice.js, ui.js
+1. Thông báo khi AQI vượt ngưỡng
+2. Tách app.js thành module: api.js, advice.js, ui.js
 
 Thông tin chỉ mang tính tham khảo, không thay thế lời khuyên của bác sĩ.

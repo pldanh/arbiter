@@ -29,3 +29,13 @@ ul{margin:0;padding-left:18px}li{margin:6px 0}
 .err{color:#a3261b;font-weight:600}
 footer{color:var(--mut);font-size:.78rem;margin-top:20px;text-align:center}
 @media (prefers-reduced-motion:reduce){body{transition:none}}
+
+#map{height:280px;border-radius:14px;margin-bottom:12px;z-index:0}
+.rank{list-style:none;padding:0;margin:0}
+.rank li{margin:0}
+.rank button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;color:var(--ink);border:0;border-bottom:1px solid #0001;border-radius:0;padding:9px 2px}
+.rank .dot{width:12px;height:12px;border-radius:50%;flex:none}
+.rank .nm{flex:1;font-weight:600}
+.rank .lvl{color:var(--mut);font-size:.85rem}
+.rank .val{font-weight:800;min-width:2.2em;text-align:right}
+.hint{color:var(--mut);font-size:.8rem;margin:8px 0 0}
